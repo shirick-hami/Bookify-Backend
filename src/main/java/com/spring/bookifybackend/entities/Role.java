@@ -15,14 +15,17 @@ public class Role {
     @Column(length = 200 , nullable = true)
     private String description;
 
+    public Role() {
+    }
+
+    public Role(Integer id) {
+        this.id = id;
+    }
+
     public Role(String name, String description) {
         this.name = name;
         this.description = description;
     }
-
-    public Role() {
-    }
-
 
     public Integer getId() {
         return id;
@@ -46,5 +49,20 @@ public class Role {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Role)) return false;
+
+        Role role = (Role) o;
+
+        return getId().equals(role.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return getId().hashCode();
     }
 }
