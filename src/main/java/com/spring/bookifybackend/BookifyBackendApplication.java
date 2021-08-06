@@ -1,4 +1,4 @@
-package com.spring.bookifybackend.boostrap;
+package com.spring.bookifybackend;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
