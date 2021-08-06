@@ -18,7 +18,7 @@ public class UserController {
         return "admin-home";
     }
 
-    @GetMapping(value = "/users")
+    @GetMapping( "/users")
     public String listAll(){
         return "admin-users";
     }
