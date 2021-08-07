@@ -114,4 +114,32 @@ public class User {
     public void addRole(Role role){
         this.roles.add(role);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof User)) return false;
+
+        User user = (User) o;
+
+        return getId().equals(user.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return getId().hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", email='" + email + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", enabled=" + enabled +
+                ", balance=" + balance +
+                ", roles=" + roles +
+                '}';
+    }
 }
