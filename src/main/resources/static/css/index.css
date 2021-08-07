@@ -11,3 +11,8 @@ form{
 .nav-item{
     font-size: 30px;
 }
+
+#home-wallpaper{
+    height: fit-content;
+    width: fit-content;
+}
