@@ -26,7 +26,7 @@ public class User {
     private boolean enabled;
 
     @Column(nullable = false)
-    private int balance;
+    private int balance = 1000;
 
     @ManyToMany
     @JoinTable(
