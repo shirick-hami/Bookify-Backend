@@ -49,6 +49,10 @@ public class UserController {
 
     @PostMapping("users/save")
     public String saveUser(User user, RedirectAttributes redirectAttributes){
+        if(!userService.isEmailUnique(user.getEmail())){
+            redirectAttributes.addFlashAttribute("error","The email is not unique");
+            return "redirect:/admin/users/new";
+        }
         userService.save(user);
         redirectAttributes.addFlashAttribute("message","The user has been saved successfully.");
         return "redirect:/admin/users";

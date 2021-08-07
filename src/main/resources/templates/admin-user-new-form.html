@@ -43,6 +43,10 @@
             <h2>Add User</h2>
         </div>
 
+        <div th:if="${ error != null }" class="alert alert-danger text-center alert-dismissible">
+            [[${error}]]
+        </div>
+
         <form th:action="@{~/admin/users/save}" method="post" th:object="${user}">
             <div class="border border-secondary rounded p-3">
 
