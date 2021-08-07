@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.Thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Admin - Home</title>
-    <link th:rel="stylesheet" th:href="@{assets/bootstrap/css/bootstrap.min.css}"/>
-    <link th:rel="stylesheet" th:href="@{css/index.css}"/>
+    <title>Admin - Users</title>
+    <link th:rel="stylesheet" th:href="@{../assets/bootstrap/css/bootstrap.min.css}"/>
+    <link th:rel="stylesheet" th:href="@{../css/index.css}"/>
 
 </head>
 <body>
@@ -12,7 +12,7 @@
         <div>
             <nav class="navbar navbar-expand-lg">
                 <a class="navbar-brand" th:href="@{/}">
-                    <img id="logo" th:src="@{images/logo.png}" alt="Bookify Logo"/>
+                    <img id="logo" th:src="@{../images/logo.png}" alt="Bookify Logo"/>
                 </a>
                 <div class="collapse navbar-collapse" id="navBar">
                     <ul class="navbar-nav">
@@ -20,7 +20,10 @@
                             <a class="nav-link" th:href="@{/admin/users}">Users</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" th:href="@{/admin/categories}">Categories</a>
+                            <a class="nav-link" th:href="@{/admin/roles}">Roles</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/admin/genres}">Genre</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" th:href="@{/admin/books}">Books</a>
@@ -35,12 +38,44 @@
                 </div>
             </nav>
         </div>
+
+        <div>
+            <h2>Manage Users</h2>
+        </div>
+
+        <div>
+            <table class="table table-bordered table-striped table-hover table-responsive-lg">
+                <thead>
+                    <th>User ID</th>
+                    <th>Email</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Roles</th>
+                    <th>Enabled</th>
+                    <th></th>
+                </thead>
+                <tbody>
+                    <tr th:each="user : ${userList}">
+                        <td>[[${user.id}]]</td>
+                        <td>[[${user.email}]]</td>
+                        <td>[[${user.firstName}]]</td>
+                        <td>[[${user.lastName}]]</td>
+                        <td>[[${user.roles}]]</td>
+                        <td>[[${user.enabled}]]</td>
+                        <td>
+
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
     </div>
 
 
 
-    <script th:src="@{assets/jquery/jquery.min.js}"></script>
-    <script th:src="@{assets/popper/popper.min.js}"></script>
-    <script th:src="@{assets/bootstrap/js/bootstrap.min.js}"></script>
+    <script th:src="@{../assets/jquery/jquery.min.js}"></script>
+    <script th:src="@{../assets/popper/popper.min.js}"></script>
+    <script th:src="@{../assets/bootstrap/js/bootstrap.min.js}"></script>
 </body>
 </html>
