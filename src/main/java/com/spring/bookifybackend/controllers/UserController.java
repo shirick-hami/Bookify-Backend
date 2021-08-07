@@ -19,8 +19,6 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @Autowired
-    private RoleService roleService;
 
     @GetMapping
     public String home(){
@@ -34,10 +32,12 @@ public class UserController {
         return "admin-users";
     }
 
-    @GetMapping( "/roles")
-    public String listAllRoles(Model model){
-        List<Role> roleList = roleService.listAll();
-        model.addAttribute("roleList",roleList);
-        return "admin-roles";
+    @GetMapping("users/new")
+    public String newUser(Model model){
+        User user = new User();
+        model.addAttribute("user",user);
+        return "admin-user-new-form";
     }
+
+
 }

@@ -25,6 +25,9 @@ public class User {
 
     private boolean enabled;
 
+    @Column(nullable = false)
+    private int balance;
+
     @ManyToMany
     @JoinTable(
             name = "user_roles",
@@ -41,6 +44,7 @@ public class User {
         this.password = password;
         this.firstName = firstName;
         this.lastName = lastName;
+        this.balance = 1000;
     }
 
     public Long getId() {
@@ -97,6 +101,14 @@ public class User {
 
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
+    }
+
+    public int getBalance() {
+        return balance;
+    }
+
+    public void setBalance(int balance) {
+        this.balance = balance;
     }
 
     public void addRole(Role role){

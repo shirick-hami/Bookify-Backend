@@ -1,3 +1,8 @@
+form{
+    max-width: 700px;
+    margin: 0 auto;
+}
+
 #logo{
     width: 300px;
     height: 100px;
