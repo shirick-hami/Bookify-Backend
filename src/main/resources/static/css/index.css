@@ -16,3 +16,7 @@ form{
     height: fit-content;
     width: fit-content;
 }
+
+.icon-green{
+    color: green;
+}

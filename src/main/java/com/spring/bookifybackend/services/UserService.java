@@ -1,12 +1,15 @@
 package com.spring.bookifybackend.services;
 
 import com.spring.bookifybackend.entities.User;
+import com.spring.bookifybackend.exceptions.UserNotFoundException;
 import com.spring.bookifybackend.repoInterfaces.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -33,6 +36,15 @@ public class UserService {
     public boolean isEmailUnique(String email){
         User user = userRepository.getUserByEmail(email);
         return user == null;
+    }
+
+    public User get(Long id) throws UserNotFoundException {
+        try {
+            return userRepository.findById(id).get();
+        }catch (NoSuchElementException e){
+            throw new UserNotFoundException("Couldn't find any user with ID = "+id);
+        }
+
     }
 
 }

@@ -1,3 +1,7 @@
-$("#alert").fadeTo(2000, 500).slideUp(500, function(){
-    $("#alert").slideUp(500);
+$("#error").fadeTo(2000, 500).slideUp(500, function(){
+    $("#error").slideUp(500);
+});
+
+$("#message").fadeTo(2000, 500).slideUp(500, function(){
+    $("#message").slideUp(500);
 });

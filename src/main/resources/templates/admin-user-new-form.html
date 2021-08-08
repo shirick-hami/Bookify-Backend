@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.Thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Admin - Add new User</title>
+    <title>Admin - [[${pageTitle}]]</title>
     <link th:rel="stylesheet" th:href="@{~/assets/bootstrap/css/bootstrap.min.css}"/>
     <link th:rel="stylesheet" th:href="@{~/css/index.css}"/>
 
@@ -40,14 +40,19 @@
         </div>
 
         <div class="text-center">
-            <h2>Add User</h2>
+            <h2>[[${pageTitle}]]</h2>
         </div>
 
-        <div th:if="${ error != null }" id="alert" class="alert alert-danger text-center alert-dismissible">
+        <div th:if="${ error != null }" id="error" class="alert alert-danger text-center alert-dismissible">
             [[${error}]]
         </div>
 
-        <form th:action="@{~/admin/users/save}" method="post" th:object="${user}">
+        <div th:if="${ message != null }" id="message" class="alert alert-success text-center alert-dismissible">
+            [[${message}]]
+        </div>
+
+
+        <form th:action="${update} == true ? @{~/admin/users/save?update=true} : @{~/admin/users/save?update=false}" method="post" th:object="${user}">
             <div class="border border-secondary rounded p-3">
 
                 <div class="form-group row m-2">
@@ -60,14 +65,14 @@
                 <div class="form-group row m-2">
                     <label class="col-sm-4 col-form-label">First Name</label>
                     <div class="col-sm-8">
-                        <input type="text" class="form-control" th:field="*{firstName}" required minlength="10" maxlength="150"/>
+                        <input type="text" class="form-control" th:field="*{firstName}" required minlength="2" maxlength="150"/>
                     </div>
                 </div>
 
                 <div class="form-group row m-2">
                     <label class="col-sm-4 col-form-label">Last Name</label>
                     <div class="col-sm-8">
-                        <input type="text" class="form-control" th:field="*{lastName}" required minlength="10" maxlength="150"/>
+                        <input type="text" class="form-control" th:field="*{lastName}" required minlength="4" maxlength="150"/>
                     </div>
                 </div>
 
