@@ -65,11 +65,11 @@ public class UserController {
             List<Role> rolesList = roleService.listAll();
             model.addAttribute("user",user);
             model.addAttribute("rolesList",rolesList);
-            model.addAttribute("pageTitle","Edit User(id="+id+")");
+            model.addAttribute("pageTitle","Edit User : id="+id);
             model.addAttribute("update",true);
             return "admin-user-new-form";
         }catch (UserNotFoundException e){
-            redirectAttributes.addFlashAttribute("message",e.getMessage());
+            redirectAttributes.addFlashAttribute("error",e.getMessage());
             return "redirect:/admin/users";
         }
 

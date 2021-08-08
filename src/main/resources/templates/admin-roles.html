@@ -70,7 +70,7 @@
                         <td>[[${role.description}]]</td>
                         <td>
                             <a th:href="@{'~/admin/roles/edit/'+${role.id}}" title="Edit this Role">
-                                <input type="button" class="btn btn-warning m-3" value="Edit">
+                                <input type="button" class="btn btn-warning" value="Edit">
                             </a>
                             <a th:href="@{'~/admin/roles/delete/'+${role.id}}" title="Delete this Role">
                                 <input type="button" class="btn btn-danger" value="Delete">
@@ -88,5 +88,8 @@
     <script th:src="@{~/assets/jquery/jquery.min.js}"></script>
     <script th:src="@{~/assets/popper/popper.min.js}"></script>
     <script th:src="@{~/assets/bootstrap/js/bootstrap.min.js}"></script>
+
+    <!-- Custom Scripts-->
+    <script th:src="@{~/js/alert.js}"></script>
 </body>
 </html>

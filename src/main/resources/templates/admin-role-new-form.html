@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.Thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Admin - Add new User</title>
+    <title>Admin - [[${pageTitle}]]</title>
     <link th:rel="stylesheet" th:href="@{~/assets/bootstrap/css/bootstrap.min.css}"/>
     <link th:rel="stylesheet" th:href="@{~/css/index.css}"/>
 
@@ -40,7 +40,7 @@
         </div>
 
         <div class="text-center">
-            <h2>Add Role</h2>
+            <h2>[[${pageTitle}]]</h2>
         </div>
 
         <div th:if="${ error != null }" id="error" class="alert alert-danger text-center alert-dismissible">
@@ -51,7 +51,7 @@
             [[${message}]]
         </div>
 
-        <form th:action="@{~/admin/roles/save}" method="post" th:object="${role}">
+        <form th:action="${update} == true ? @{~/admin/roles/save?update=true} : @{~/admin/roles/save?update=false}" method="post" th:object="${role}">
             <div class="border border-secondary rounded p-3">
 
                 <div class="form-group row m-2">
@@ -81,5 +81,8 @@
     <script th:src="@{~/assets/jquery/jquery.min.js}"></script>
     <script th:src="@{~/assets/popper/popper.min.js}"></script>
     <script th:src="@{~/assets/bootstrap/js/bootstrap.min.js}"></script>
+
+    <!-- Custom Scripts-->
+    <script th:src="@{~/js/alert.js}"></script>
 </body>
 </html>
