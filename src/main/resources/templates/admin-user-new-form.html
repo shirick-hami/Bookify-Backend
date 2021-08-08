@@ -43,7 +43,7 @@
             <h2>Add User</h2>
         </div>
 
-        <div th:if="${ error != null }" class="alert alert-danger text-center alert-dismissible">
+        <div th:if="${ error != null }" id="alert" class="alert alert-danger text-center alert-dismissible">
             [[${error}]]
         </div>
 
@@ -111,5 +111,8 @@
     <script th:src="@{~/assets/jquery/jquery.min.js}"></script>
     <script th:src="@{~/assets/popper/popper.min.js}"></script>
     <script th:src="@{~/assets/bootstrap/js/bootstrap.min.js}"></script>
+
+    <!-- Custom Scripts-->
+    <script th:src="@{~/js/alert.js}"></script>
 </body>
 </html>

@@ -46,7 +46,7 @@
             </a>
         </div>
 
-        <div th:if="${ message != null }" class="alert alert-success text-center alert-dismissible">
+        <div th:if="${ message != null }" id="alert" class="alert alert-success text-center alert-dismissible">
             [[${message}]]
         </div>
 
@@ -83,9 +83,11 @@
     </div>
 
 
-    <script th:src="@{js/alert.js}"></script>
-    <script th:src="@{~/assets/jquery/jquery.min.js}"></script>
     <script th:src="@{~/assets/popper/popper.min.js}"></script>
+    <script th:src="@{~/assets/jquery/jquery.min.js}"></script>
     <script th:src="@{~/assets/bootstrap/js/bootstrap.min.js}"></script>
+
+    <!-- Custom Scripts-->
+    <script th:src="@{~/js/alert.js}"></script>
 </body>
 </html>
