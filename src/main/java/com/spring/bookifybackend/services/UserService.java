@@ -28,6 +28,10 @@ public class UserService {
         userRepository.save(user);
     }
 
+    public void delete(User user){
+        userRepository.delete(user);
+    }
+
     private void encodePassword(User user){
         String encodedPassword = passwordEncoder.encode(user.getPassword());
         user.setPassword(encodedPassword);

@@ -48,8 +48,8 @@ public class UserController {
     }
 
     @PostMapping("users/save")
-    public String saveUser(@RequestParam boolean update ,User user ,RedirectAttributes redirectAttributes){
-        if(!userService.isEmailUnique(user.getEmail()) && !update){
+    public String saveUser(@RequestParam boolean updateUser ,User user ,RedirectAttributes redirectAttributes){
+        if(!userService.isEmailUnique(user.getEmail()) && !updateUser){
             redirectAttributes.addFlashAttribute("error","The email is not unique");
             return "redirect:/admin/users/new";
         }
@@ -66,8 +66,22 @@ public class UserController {
             model.addAttribute("user",user);
             model.addAttribute("rolesList",rolesList);
             model.addAttribute("pageTitle","Edit User : id="+id);
-            model.addAttribute("update",true);
+            model.addAttribute("updateUser",true);
             return "admin-user-new-form";
+        }catch (UserNotFoundException e){
+            redirectAttributes.addFlashAttribute("error",e.getMessage());
+            return "redirect:/admin/users";
+        }
+
+    }
+
+    @GetMapping("users/delete/{id}")
+    public String deleteUser(@PathVariable(value = "id") Long id ,Model model,RedirectAttributes redirectAttributes){
+        try{
+            User user = userService.get(id);
+            redirectAttributes.addFlashAttribute("message","The user with id = "+user.getId()+" has been deleted");
+            userService.delete(user);
+            return "redirect:/admin/users";
         }catch (UserNotFoundException e){
             redirectAttributes.addFlashAttribute("error",e.getMessage());
             return "redirect:/admin/users";

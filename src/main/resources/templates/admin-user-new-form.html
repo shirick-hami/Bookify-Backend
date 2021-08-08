@@ -52,7 +52,7 @@
         </div>
 
 
-        <form th:action="${update} == true ? @{~/admin/users/save?update=true} : @{~/admin/users/save?update=false}" method="post" th:object="${user}">
+        <form th:action="${updateUser} == true ? @{~/admin/users/save?updateUser=true} : @{~/admin/users/save?updateUser=false}" method="post" th:object="${user}">
             <div class="border border-secondary rounded p-3">
 
                 <div class="form-group row m-2">

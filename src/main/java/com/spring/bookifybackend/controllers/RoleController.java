@@ -36,7 +36,7 @@ public class RoleController {
     }
 
     @PostMapping("roles/save")
-    public String saveRole(@RequestParam(value = "update") boolean update, Role role, RedirectAttributes redirectAttributes){
+    public String saveRole(@RequestParam boolean update, Role role, RedirectAttributes redirectAttributes){
         if(!roleService.isNameUnique(role.getName()) && !update){
             redirectAttributes.addFlashAttribute("error","The role Name is not unique");
             return "redirect:/admin/role/new";
