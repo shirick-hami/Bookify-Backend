@@ -10,7 +10,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.view.RedirectView;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.List;
 
 @Controller
@@ -40,7 +43,6 @@ public class UserController {
     public String newUser(Model model){
         List<Role> rolesList = roleService.listAll();
         User user = new User();
-        user.setEnabled(true);
         model.addAttribute("user",user);
         model.addAttribute("rolesList",rolesList);
         model.addAttribute("pageTitle","Add new User");
@@ -51,16 +53,18 @@ public class UserController {
     @PostMapping("users/save")
     public String saveUser(@RequestParam(value = "updateUser") boolean updateUser ,
                            @RequestParam(value = "id",required = false) Long id,
-                           User user ,RedirectAttributes redirectAttributes) throws UserNotFoundException {
-
-        if(!userService.isEmailUnique(user.getEmail())){
+                           User user , RedirectAttributes redirectAttributes) throws UserNotFoundException {
+        if(!userService.isEmailUnique(user.getEmail()) && !updateUser){
             redirectAttributes.addFlashAttribute("error","The email is not unique");
             return "redirect:/admin/users/new";
         }
         if(updateUser){
             User tempUser = userService.get(id);
             Long ID = tempUser.getId();
-            userService.delete(tempUser);
+            if(!userService.isEmailUnique(user.getEmail()) && !(tempUser.getEmail().equals(user.getEmail()))){
+                redirectAttributes.addFlashAttribute("error","The email is not unique");
+                return "redirect:/admin/users/edit/"+ID;
+            }
             user.setId(ID);
             userService.save(user);
             redirectAttributes.addFlashAttribute("message","The user with id = "+ID+" has been updated successfully.");
