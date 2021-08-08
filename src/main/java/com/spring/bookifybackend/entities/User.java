@@ -1,5 +1,7 @@
 package com.spring.bookifybackend.entities;
 
+import org.hibernate.annotations.GenericGenerator;
+
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
@@ -8,7 +10,10 @@ import java.util.Set;
 @Table(name = "users")
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
+    @GeneratedValue(strategy=GenerationType.IDENTITY, generator="IdOrGenerated")
+    @GenericGenerator(name="IdOrGenerated",strategy="com.spring.bookifybackend.idgen.UserIdGenerate")
+    @Column(name = "id", unique = true, nullable = false, precision = 20, scale = 0)
     private Long id;
 
     @Column(length = 100 , nullable = false,unique = true)

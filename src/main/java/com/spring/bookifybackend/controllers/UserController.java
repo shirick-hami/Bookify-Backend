@@ -44,14 +44,27 @@ public class UserController {
         model.addAttribute("user",user);
         model.addAttribute("rolesList",rolesList);
         model.addAttribute("pageTitle","Add new User");
+        model.addAttribute("updateUser",false);
         return "admin-user-new-form";
     }
 
     @PostMapping("users/save")
-    public String saveUser(@RequestParam boolean updateUser ,User user ,RedirectAttributes redirectAttributes){
-        if(!userService.isEmailUnique(user.getEmail()) && !updateUser){
+    public String saveUser(@RequestParam(value = "updateUser") boolean updateUser ,
+                           @RequestParam(value = "id",required = false) Long id,
+                           User user ,RedirectAttributes redirectAttributes) throws UserNotFoundException {
+
+        if(!userService.isEmailUnique(user.getEmail())){
             redirectAttributes.addFlashAttribute("error","The email is not unique");
             return "redirect:/admin/users/new";
+        }
+        if(updateUser){
+            User tempUser = userService.get(id);
+            Long ID = tempUser.getId();
+            userService.delete(tempUser);
+            user.setId(ID);
+            userService.save(user);
+            redirectAttributes.addFlashAttribute("message","The user with id = "+ID+" has been updated successfully.");
+            return "redirect:/admin/users";
         }
         userService.save(user);
         redirectAttributes.addFlashAttribute("message","The user has been saved successfully.");
