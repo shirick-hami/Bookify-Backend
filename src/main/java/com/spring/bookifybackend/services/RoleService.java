@@ -24,6 +24,10 @@ public class RoleService {
         roleRepository.save(role);
     }
 
+    public void delete(Role role){
+        roleRepository.delete(role);
+    }
+
     public boolean isNameUnique(String name){
         Role role = roleRepository.getRoleByName(name);
         return role == null;

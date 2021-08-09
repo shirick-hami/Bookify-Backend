@@ -55,23 +55,23 @@ public class UserController {
                            @RequestParam(value = "id",required = false) Long id,
                            User user , RedirectAttributes redirectAttributes) throws UserNotFoundException {
         if(!userService.isEmailUnique(user.getEmail()) && !updateUser){
-            redirectAttributes.addFlashAttribute("error","The email is not unique");
+            redirectAttributes.addFlashAttribute("error","The User Email is not unique");
             return "redirect:/admin/users/new";
         }
         if(updateUser){
             User tempUser = userService.get(id);
             Long ID = tempUser.getId();
             if(!userService.isEmailUnique(user.getEmail()) && !(tempUser.getEmail().equals(user.getEmail()))){
-                redirectAttributes.addFlashAttribute("error","The email is not unique");
+                redirectAttributes.addFlashAttribute("error","The User Email is not unique");
                 return "redirect:/admin/users/edit/"+ID;
             }
             user.setId(ID);
             userService.save(user);
-            redirectAttributes.addFlashAttribute("message","The user with id = "+ID+" has been updated successfully.");
+            redirectAttributes.addFlashAttribute("message","The User with id = "+ID+" has been updated successfully.");
             return "redirect:/admin/users";
         }
         userService.save(user);
-        redirectAttributes.addFlashAttribute("message","The user has been saved successfully.");
+        redirectAttributes.addFlashAttribute("message","The User has been saved successfully.");
         return "redirect:/admin/users";
     }
 
@@ -96,13 +96,12 @@ public class UserController {
     public String deleteUser(@PathVariable(value = "id") Long id ,Model model,RedirectAttributes redirectAttributes){
         try{
             User user = userService.get(id);
-            redirectAttributes.addFlashAttribute("message","The user with id = "+user.getId()+" has been deleted");
+            redirectAttributes.addFlashAttribute("message","The user with id = "+user.getId()+" and email = "+user.getEmail()+" has been deleted");
             userService.delete(user);
             return "redirect:/admin/users";
         }catch (UserNotFoundException e){
             redirectAttributes.addFlashAttribute("error",e.getMessage());
             return "redirect:/admin/users";
         }
-
     }
 }

@@ -12,7 +12,7 @@ public class User {
     @Id
     @Basic(optional = false)
     @GeneratedValue(strategy=GenerationType.IDENTITY, generator="IdOrGenerated")
-    @GenericGenerator(name="IdOrGenerated",strategy="com.spring.bookifybackend.idgen.UserIdGenerate")
+    @GenericGenerator(name="IdOrGenerated",strategy="com.spring.bookifybackend.idgen.IdGenerator")
     @Column(name = "id", unique = true, nullable = false, precision = 20, scale = 0)
     private Long id;
 
@@ -33,7 +33,7 @@ public class User {
     @Column(nullable = false)
     private int balance = 1000;
 
-    @ManyToMany
+    @ManyToMany()
     @JoinTable(
             name = "user_roles",
             joinColumns = @JoinColumn(name="user_id"),

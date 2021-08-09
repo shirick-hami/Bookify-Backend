@@ -32,14 +32,29 @@ public class RoleController {
         Role role = new Role();
         model.addAttribute("role",role);
         model.addAttribute("pageTitle","Add new Role");
+        model.addAttribute("updateRole",false);
         return "admin-role-new-form";
     }
 
     @PostMapping("roles/save")
-    public String saveRole(@RequestParam boolean update, Role role, RedirectAttributes redirectAttributes){
-        if(!roleService.isNameUnique(role.getName()) && !update){
-            redirectAttributes.addFlashAttribute("error","The role Name is not unique");
-            return "redirect:/admin/role/new";
+    public String saveRole(@RequestParam(value = "updateRole") boolean updateRole ,
+                           @RequestParam(value = "id",required = false) int id,
+                           Role role , RedirectAttributes redirectAttributes) throws RoleNotFoundException{
+        if(!roleService.isNameUnique(role.getName()) && !updateRole){
+            redirectAttributes.addFlashAttribute("error","The Role Name is not unique");
+            return "redirect:/admin/roles/new";
+        }
+        if(updateRole){
+            Role tempRole = roleService.get(id);
+            int ID = tempRole.getId();
+            if(!roleService.isNameUnique(role.getName()) && !(tempRole.getName().equals(role.getName()))){
+                redirectAttributes.addFlashAttribute("error","The Role Name is not unique");
+                return "redirect:/admin/roles/edit/"+ID;
+            }
+            role.setId(ID);
+            roleService.save(role);
+            redirectAttributes.addFlashAttribute("message","The Role with id = "+ID+" has been updated successfully.");
+            return "redirect:/admin/roles";
         }
         roleService.save(role);
         redirectAttributes.addFlashAttribute("message","The Role has been saved successfully.");
@@ -52,12 +67,25 @@ public class RoleController {
             Role role = roleService.get(id);
             model.addAttribute("role",role);
             model.addAttribute("pageTitle","Edit Role : id="+id);
-            model.addAttribute("update",true);
+            model.addAttribute("updateRole",true);
             return "admin-role-new-form";
         }catch (RoleNotFoundException e){
             redirectAttributes.addFlashAttribute("error",e.getMessage());
             return "redirect:/admin/roles";
         }
 
+    }
+
+    @GetMapping("roles/delete/{id}")
+    public String deleteUser(@PathVariable(value = "id") int id ,Model model,RedirectAttributes redirectAttributes){
+        try{
+            Role role = roleService.get(id);
+            redirectAttributes.addFlashAttribute("message","The Role with id = "+role.getId()+" and Name = "+role.getName()+" has been deleted");
+            roleService.delete(role);
+            return "redirect:/admin/roles";
+        }catch (RoleNotFoundException e){
+            redirectAttributes.addFlashAttribute("error",e.getMessage());
+            return "redirect:/admin/role";
+        }
     }
 }

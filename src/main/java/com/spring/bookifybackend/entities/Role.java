@@ -1,12 +1,17 @@
 package com.spring.bookifybackend.entities;
 
+import org.hibernate.annotations.GenericGenerator;
+
 import javax.persistence.*;
 
 @Entity
 @Table(name = "roles")
 public class Role {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
+    @GeneratedValue(strategy=GenerationType.IDENTITY, generator="IdOrGenerated")
+    @GenericGenerator(name="IdOrGenerated",strategy="com.spring.bookifybackend.idgen.IdGenerator")
+    @Column(name = "id", unique = true, nullable = false, precision = 20, scale = 0)
     private Integer id;
 
     @Column(length = 50, nullable = false, unique = true)
