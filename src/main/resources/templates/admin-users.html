@@ -33,7 +33,7 @@
                             <a class="nav-link" th:href="@{~/admin/orders}">Orders</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" th:href="@{~/admin/settings}">Settings</a>
+                            <a class="nav-link" th:href="@{~/admin/addresses}">Addresses</a>
                         </li>
                     </ul>
                 </div>
@@ -76,8 +76,15 @@
                         <td>[[${user.balance}]]</td>
                         <td>[[${user.roles}]]</td>
                         <td>
-                            <i th:if="${user.enabled == true}" class="bi bi-check-circle-fill icon-green "></i>
-                            <i th:if="${user.enabled == false}" class="bi bi-check-circle"></i>
+                            <a th:if="${user.enabled == true}" th:href="@{'~/admin/users/'+${user.id}+'/enabled/false'}"
+                                title="Disable this user">
+                                <i class="bi bi-check-circle-fill icon-green "></i>
+                            </a>
+                            <a th:if="${user.enabled == false}" th:href="@{'~/admin/users/'+${user.id}+'/enabled/true'}"
+                               title="Enable this user">
+                                <i class="bi bi-check-circle"></i>
+                            </a>
+
                         </td>
                         <td>
                             <a th:href="@{'~/admin/users/edit/'+${user.id}}" title="Edit this User">
