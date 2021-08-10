@@ -99,6 +99,40 @@
             </table>
         </div>
 
+        <div class="m-4" th:if="${totalItems} > 0">
+            <span>Showing Users # [[${startCount}]] to [[${endCount}]] of [[${totalItems}]]</span>
+        </div>
+        <div class="m-4" th:unless="${totalItems} > 0">
+            <span>No Users Found</span>
+        </div>
+
+        <div>
+            <nav>
+                <ul class="pagination justify-content-center">
+
+                    <li class="page-item">
+                        <a class="page-link" th:href="@{~/admin/users/page/1}">First</a>
+                    </li>
+
+                    <li class="page-item">
+                        <a class="page-link" th:href="@{'~/admin/users/page/' + ${currentPage - 1}}">Previous</a>
+                    </li>
+
+                    <li class="page-item" th:each="i : ${#numbers.sequence(1,totalPages)}">
+                        <a class="page-link" th:href="@{'~/admin/users/page/' + ${i}}">[[${i}]]</a>
+                    </li>
+
+                    <li class="page-item">
+                        <a class="page-link" th:href="@{'~/admin/users/page/' + ${currentPage + 1}}">Next</a>
+                    </li>
+
+                    <li class="page-item">
+                        <a class="page-link" th:href="@{'~/admin/users/page/' + ${totalPages}}">Last</a>
+                    </li>
+
+                </ul>
+            </nav>
+        </div>
     </div>
 
 

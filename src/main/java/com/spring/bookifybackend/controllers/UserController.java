@@ -6,6 +6,7 @@ import com.spring.bookifybackend.exceptions.UserNotFoundException;
 import com.spring.bookifybackend.services.RoleService;
 import com.spring.bookifybackend.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -33,9 +34,28 @@ public class UserController {
     }
 
     @GetMapping( "/users")
-    public String listAllUsers(Model model){
-        List<User> userList = userService.listAll();
+    public String listFirstPage(Model model){
+        return listUsersByPage(1,model);
+    }
+
+    @GetMapping("users/page/{pageNumber}")
+    public String listUsersByPage(@PathVariable(name = "pageNumber") int pageNumber , Model model){
+        Page<User> userPage = userService.listByPage(pageNumber);
+        List<User> userList = userPage.getContent();
+
+        long startCount = (long) (pageNumber - 1) * UserService.USERS_PER_PAGE + 1;
+        long endCount = startCount + UserService.USERS_PER_PAGE -1;
+        if(endCount > userPage.getTotalElements()){
+            endCount = userPage.getTotalElements();
+        }
+
+        model.addAttribute("startCount",startCount);
+        model.addAttribute("endCount",endCount);
+        model.addAttribute("currentPage",pageNumber);
+        model.addAttribute("totalPages",userPage.getTotalPages());
         model.addAttribute("userList",userList);
+        model.addAttribute("totalItems",userPage.getTotalElements());
+
         return "admin-users";
     }
 

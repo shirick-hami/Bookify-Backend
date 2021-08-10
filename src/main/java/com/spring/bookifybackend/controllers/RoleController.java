@@ -1,11 +1,10 @@
 package com.spring.bookifybackend.controllers;
 
 import com.spring.bookifybackend.entities.Role;
-import com.spring.bookifybackend.entities.User;
 import com.spring.bookifybackend.exceptions.RoleNotFoundException;
-import com.spring.bookifybackend.exceptions.UserNotFoundException;
 import com.spring.bookifybackend.services.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -40,25 +39,36 @@ public class RoleController {
     public String saveRole(@RequestParam(value = "updateRole") boolean updateRole ,
                            @RequestParam(value = "id",required = false) int id,
                            Role role , RedirectAttributes redirectAttributes) throws RoleNotFoundException{
-        if(!roleService.isNameUnique(role.getName()) && !updateRole){
-            redirectAttributes.addFlashAttribute("error","The Role Name is not unique");
-            return "redirect:/admin/roles/new";
-        }
-        if(updateRole){
-            Role tempRole = roleService.get(id);
-            int ID = tempRole.getId();
-            if(!roleService.isNameUnique(role.getName()) && !(tempRole.getName().equals(role.getName()))){
+        try{
+            if(!roleService.isNameUnique(role.getName()) && !updateRole){
                 redirectAttributes.addFlashAttribute("error","The Role Name is not unique");
-                return "redirect:/admin/roles/edit/"+ID;
+                return "redirect:/admin/roles/new";
             }
-            role.setId(ID);
+            if(updateRole){
+                Role tempRole = roleService.get(id);
+                int ID = tempRole.getId();
+                if(!roleService.isNameUnique(role.getName()) && !(tempRole.getName().equals(role.getName()))){
+                    redirectAttributes.addFlashAttribute("error","The Role Name is not unique");
+                    return "redirect:/admin/roles/edit/"+ID;
+                }
+                role.setId(ID);
+                roleService.save(role);
+                redirectAttributes.addFlashAttribute("message","The Role with id = "+ID+" has been updated successfully.");
+                return "redirect:/admin/roles";
+            }
             roleService.save(role);
-            redirectAttributes.addFlashAttribute("message","The Role with id = "+ID+" has been updated successfully.");
+            redirectAttributes.addFlashAttribute("message","The Role has been saved successfully.");
+            return "redirect:/admin/roles";
+        }catch (DataIntegrityViolationException e) {
+            if (e.getMostSpecificCause().getClass().getName().equals("org.postgresql.util.PSQLException")) {
+                redirectAttributes.addFlashAttribute("error", e.getMostSpecificCause().getMessage());
+                return "redirect:/admin/roles";
+            }
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
             return "redirect:/admin/roles";
         }
-        roleService.save(role);
-        redirectAttributes.addFlashAttribute("message","The Role has been saved successfully.");
-        return "redirect:/admin/roles";
+
+
     }
 
     @GetMapping("roles/edit/{id}")
@@ -80,12 +90,19 @@ public class RoleController {
     public String deleteUser(@PathVariable(value = "id") int id ,Model model,RedirectAttributes redirectAttributes){
         try{
             Role role = roleService.get(id);
-            redirectAttributes.addFlashAttribute("message","The Role with id = "+role.getId()+" and Name = "+role.getName()+" has been deleted");
             roleService.delete(role);
+            redirectAttributes.addFlashAttribute("message","The Role with id = "+role.getId()+" and Name = "+role.getName()+" has been deleted");
             return "redirect:/admin/roles";
         }catch (RoleNotFoundException e){
             redirectAttributes.addFlashAttribute("error",e.getMessage());
-            return "redirect:/admin/role";
+            return "redirect:/admin/roles";
+        }catch (DataIntegrityViolationException e) {
+            if (e.getMostSpecificCause().getClass().getName().equals("org.postgresql.util.PSQLException")) {
+                redirectAttributes.addFlashAttribute("error", e.getMostSpecificCause().getMessage());
+                return "redirect:/admin/roles";
+            }
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/admin/roles";
         }
     }
 }
