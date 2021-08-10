@@ -6,6 +6,7 @@ import com.spring.bookifybackend.exceptions.UserNotFoundException;
 import com.spring.bookifybackend.services.RoleService;
 import com.spring.bookifybackend.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -34,7 +35,8 @@ public class UserController {
     }
 
     @GetMapping( "/users")
-    public String listFirstPage(Model model){
+    public String listFirstPage(Model model,HttpServletRequest req){
+
         return listUsersByPage(1,model);
     }
 
@@ -48,7 +50,6 @@ public class UserController {
         if(endCount > userPage.getTotalElements()){
             endCount = userPage.getTotalElements();
         }
-
         model.addAttribute("startCount",startCount);
         model.addAttribute("endCount",endCount);
         model.addAttribute("currentPage",pageNumber);
@@ -108,6 +109,13 @@ public class UserController {
         }catch (UserNotFoundException e){
             redirectAttributes.addFlashAttribute("error",e.getMessage());
             return "redirect:/admin/users";
+        }catch (DataIntegrityViolationException e) {
+            if (e.getMostSpecificCause().getClass().getName().equals("org.postgresql.util.PSQLException")) {
+                redirectAttributes.addFlashAttribute("error", e.getMostSpecificCause().getMessage());
+                return "redirect:/admin/users";
+            }
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/admin/users";
         }
 
     }
@@ -121,6 +129,13 @@ public class UserController {
             return "redirect:/admin/users";
         }catch (UserNotFoundException e){
             redirectAttributes.addFlashAttribute("error",e.getMessage());
+            return "redirect:/admin/users";
+        }catch (DataIntegrityViolationException e) {
+            if (e.getMostSpecificCause().getClass().getName().equals("org.postgresql.util.PSQLException")) {
+                redirectAttributes.addFlashAttribute("error", e.getMostSpecificCause().getMessage());
+                return "redirect:/admin/users";
+            }
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
             return "redirect:/admin/users";
         }
     }
