@@ -1,5 +1,6 @@
 package com.spring.bookifybackend.controllers;
 
+import com.spring.bookifybackend.helperClasses.PaginationRedirect;
 import com.spring.bookifybackend.entities.Role;
 import com.spring.bookifybackend.entities.User;
 import com.spring.bookifybackend.exceptions.UserNotFoundException;
@@ -12,10 +13,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.util.List;
 
 @Controller
@@ -36,8 +35,12 @@ public class UserController {
 
     @GetMapping( "/users")
     public String listFirstPage(Model model,HttpServletRequest req){
-
-        return listUsersByPage(1,model);
+        PaginationRedirect paginationRedirect = (PaginationRedirect) req.getSession().getAttribute("paginationRedirect");
+        req.getSession().removeAttribute("paginationRedirect");
+        if(!paginationRedirect.isiSRedirect()){
+            return listUsersByPage(1,model);
+        }
+        return listUsersByPage(paginationRedirect.getPageNumber(),model);
     }
 
     @GetMapping("users/page/{pageNumber}")
