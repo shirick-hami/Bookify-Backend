@@ -1,6 +1,8 @@
 package com.spring.bookifybackend.helperClasses;
 
-public class PaginationRedirect {
+import java.io.Serializable;
+
+public class PaginationRedirect implements Serializable {
     private boolean iSRedirect;
     private int pageNumber;
     private String context;
@@ -66,4 +68,6 @@ public class PaginationRedirect {
                 ", context='" + context + '\'' +
                 '}';
     }
+
+
 }

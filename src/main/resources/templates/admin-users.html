@@ -76,11 +76,11 @@
                         <td>[[${user.balance}]]</td>
                         <td>[[${user.roles}]]</td>
                         <td>
-                            <a th:if="${user.enabled == true}" th:href="@{'~/admin/users/'+${user.id}+'/enabled/false'}"
+                            <a th:if="${user.enabled == true}" th:href="@{'~/admin/users/'+${user.id}+'/enabled/false?page='+${currentPage}}"
                                 title="Disable this user">
                                 <i class="bi bi-check-circle-fill icon-green "></i>
                             </a>
-                            <a th:if="${user.enabled == false}" th:href="@{'~/admin/users/'+${user.id}+'/enabled/true'}"
+                            <a th:if="${user.enabled == false}" th:href="@{'~/admin/users/'+${user.id}+'/enabled/true?page='+${currentPage}}"
                                title="Enable this user">
                                 <i class="bi bi-check-circle"></i>
                             </a>

@@ -15,6 +15,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 @Controller
@@ -37,17 +41,26 @@ public class UserController {
     public String listFirstPage(Model model,HttpServletRequest req){
         PaginationRedirect paginationRedirect = (PaginationRedirect) req.getSession().getAttribute("paginationRedirect");
         req.getSession().removeAttribute("paginationRedirect");
-        if(!paginationRedirect.isiSRedirect()){
-            return listUsersByPage(1,model);
+        if(paginationRedirect != null){
+            if(paginationRedirect.isiSRedirect()){
+                return listUsersByPage(paginationRedirect.getPageNumber(),model);
+            }
+            else{
+                return listUsersByPage(1,model);
+            }
         }
-        return listUsersByPage(paginationRedirect.getPageNumber(),model);
+        return listUsersByPage(1,model);
     }
 
     @GetMapping("users/page/{pageNumber}")
     public String listUsersByPage(@PathVariable(name = "pageNumber") int pageNumber , Model model){
-        Page<User> userPage = userService.listByPage(pageNumber);
+        Page<User> userPage;
+        try{
+            userPage = userService.listByPage(pageNumber);
+        }catch(Exception e){
+            userPage = userService.listByPage(pageNumber-1);
+        }
         List<User> userList = userPage.getContent();
-
         long startCount = (long) (pageNumber - 1) * UserService.USERS_PER_PAGE + 1;
         long endCount = startCount + UserService.USERS_PER_PAGE -1;
         if(endCount > userPage.getTotalElements()){
@@ -145,12 +158,17 @@ public class UserController {
 
     @GetMapping("users/{id}/enabled/{status}")
     public String updateUserStatus(@PathVariable(value = "id") Long id,
-                                   @PathVariable(value = "status") boolean status, RedirectAttributes redirectAttributes){
+                                   @PathVariable(value = "status") boolean status,
+                                   @RequestParam(value = "page",required = false) int pageNumber,
+                                   RedirectAttributes redirectAttributes,
+                                   HttpSession session ){
         userService.updateUserEnabledStatus(id,status);
         if(status){
+            session.setAttribute("paginationRedirect", new PaginationRedirect(true,pageNumber,"USERS"));
             redirectAttributes.addFlashAttribute("message","The user with id = "+id+" has been enabled");
         }
         else{
+            session.setAttribute("paginationRedirect", new PaginationRedirect(true,pageNumber,"USERS"));
             redirectAttributes.addFlashAttribute("message","The user with id = "+id+" has been disabled");
         }
         return "redirect:/admin/users";

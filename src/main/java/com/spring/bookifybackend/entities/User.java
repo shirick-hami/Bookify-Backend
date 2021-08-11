@@ -8,7 +8,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "users")
-public class User {
+public class User implements Comparable<User>{
     @Id
     @Basic(optional = false)
     @GeneratedValue(strategy=GenerationType.IDENTITY, generator="IdOrGenerated")
@@ -146,5 +146,10 @@ public class User {
                 ", balance=" + balance +
                 ", roles=" + roles +
                 '}';
+    }
+
+    @Override
+    public int compareTo(User o) {
+        return (int) (this.getId() - o.getId());
     }
 }
