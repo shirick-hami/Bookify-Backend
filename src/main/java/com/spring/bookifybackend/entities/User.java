@@ -3,12 +3,13 @@ package com.spring.bookifybackend.entities;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
 @Table(name = "users")
-public class User implements Comparable<User>{
+public class User implements Comparable<User>, Serializable {
     @Id
     @Basic(optional = false)
     @GeneratedValue(strategy=GenerationType.IDENTITY, generator="IdOrGenerated")
@@ -33,7 +34,7 @@ public class User implements Comparable<User>{
     @Column(nullable = false)
     private int balance = 1000;
 
-    @ManyToMany()
+    @ManyToMany(targetEntity = Role.class,cascade = CascadeType.ALL)
     @JoinTable(
             name = "user_roles",
             joinColumns = @JoinColumn(name="user_id"),

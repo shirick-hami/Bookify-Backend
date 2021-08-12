@@ -19,7 +19,7 @@ import java.util.NoSuchElementException;
 @Service
 @Transactional
 public class UserService {
-    public static final int USERS_PER_PAGE = 1;
+    public static final int USERS_PER_PAGE = 2;
 
     @Autowired
     private UserRepository userRepository;

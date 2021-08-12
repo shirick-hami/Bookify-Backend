@@ -42,7 +42,7 @@
 
         <div class="text-center">
             <h2 style="display: inline">Manage Users</h2>
-            <a th:href="@{~/admin/users/new}">
+            <a th:href="@{'~/admin/users/new?page='+${currentPage}}">
                 <input type="button" value="Add" class="btn btn-dark m-3">
             </a>
         </div>
@@ -87,10 +87,10 @@
 
                         </td>
                         <td>
-                            <a th:href="@{'~/admin/users/edit/'+${user.id}}" title="Edit this User">
+                            <a th:href="@{'~/admin/users/edit/'+${user.id}+'?page='+${currentPage}}"title="Edit this User">
                                 <input type="button" class="btn btn-warning" value="Edit">
                             </a>
-                            <a th:href="@{'~/admin/users/delete/'+${user.id}}" title="Delete this User">
+                            <a th:href="@{'~/admin/users/delete/'+${user.id}+'?page='+${currentPage}}" title="Delete this User">
                                 <input type="button" class="btn btn-danger" value="Delete">
                             </a>
                         </td>

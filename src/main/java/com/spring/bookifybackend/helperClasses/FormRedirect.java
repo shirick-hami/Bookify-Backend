@@ -1,6 +1,8 @@
 package com.spring.bookifybackend.helperClasses;
 
-public class FormRedirect<T> {
+import java.io.Serializable;
+
+public class FormRedirect<T> implements Serializable {
     private boolean isRedirect;
     private T object;
 
@@ -9,11 +11,11 @@ public class FormRedirect<T> {
         this.object = object;
     }
 
-    public boolean isRedirect() {
+    public boolean getIsRedirect() {
         return isRedirect;
     }
 
-    public void setRedirect(boolean redirect) {
+    public void setIsRedirect(boolean redirect) {
         isRedirect = redirect;
     }
 
@@ -32,13 +34,13 @@ public class FormRedirect<T> {
 
         FormRedirect<?> that = (FormRedirect<?>) o;
 
-        if (isRedirect() != that.isRedirect()) return false;
+        if (getIsRedirect() != that.getIsRedirect()) return false;
         return getObject() != null ? getObject().equals(that.getObject()) : that.getObject() == null;
     }
 
     @Override
     public int hashCode() {
-        int result = (isRedirect() ? 1 : 0);
+        int result = (getIsRedirect() ? 1 : 0);
         result = 31 * result + (getObject() != null ? getObject().hashCode() : 0);
         return result;
     }

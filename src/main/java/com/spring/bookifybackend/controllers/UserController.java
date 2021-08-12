@@ -1,5 +1,6 @@
 package com.spring.bookifybackend.controllers;
 
+import com.spring.bookifybackend.helperClasses.FormRedirect;
 import com.spring.bookifybackend.helperClasses.PaginationRedirect;
 import com.spring.bookifybackend.entities.Role;
 import com.spring.bookifybackend.entities.User;
@@ -16,9 +17,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
+
 import java.util.List;
 
 @Controller
@@ -39,8 +38,9 @@ public class UserController {
 
     @GetMapping( "/users")
     public String listFirstPage(Model model,HttpServletRequest req){
-        PaginationRedirect paginationRedirect = (PaginationRedirect) req.getSession().getAttribute("paginationRedirect");
-        req.getSession().removeAttribute("paginationRedirect");
+        PaginationRedirect paginationRedirect = (PaginationRedirect) req.getSession().getAttribute("usersPaginationRedirect");
+        req.getSession().removeAttribute("usersPaginationRedirect");
+
         if(paginationRedirect != null){
             if(paginationRedirect.isiSRedirect()){
                 return listUsersByPage(paginationRedirect.getPageNumber(),model);
@@ -49,17 +49,20 @@ public class UserController {
                 return listUsersByPage(1,model);
             }
         }
+
+        req.getSession().removeAttribute("usersFormRedirect");
+
         return listUsersByPage(1,model);
     }
 
     @GetMapping("users/page/{pageNumber}")
     public String listUsersByPage(@PathVariable(name = "pageNumber") int pageNumber , Model model){
-        Page<User> userPage;
-        try{
+        Page<User> userPage = userService.listByPage(pageNumber);
+        if(userPage.getTotalPages()<pageNumber){
+            pageNumber = userPage.getTotalPages();
             userPage = userService.listByPage(pageNumber);
-        }catch(Exception e){
-            userPage = userService.listByPage(pageNumber-1);
         }
+
         List<User> userList = userPage.getContent();
         long startCount = (long) (pageNumber - 1) * UserService.USERS_PER_PAGE + 1;
         long endCount = startCount + UserService.USERS_PER_PAGE -1;
@@ -77,9 +80,32 @@ public class UserController {
     }
 
     @GetMapping("users/new")
-    public String newUser(Model model){
+    public String newUser(Model model, HttpServletRequest req,
+                          @RequestParam(value = "page",required = false) Integer pageNumber,
+                          @RequestParam(value = "redirect",required = false) boolean redirect,
+                          HttpSession session){
+        PaginationRedirect paginationRedirect = (PaginationRedirect) req.getSession().getAttribute("usersPaginationRedirect");
+        if(redirect){
+            pageNumber = paginationRedirect.getPageNumber();
+        }
+
+        session.setAttribute("usersPaginationRedirect",
+                new PaginationRedirect(true,pageNumber,"USERS"));
+
         List<Role> rolesList = roleService.listAll();
-        User user = new User();
+
+        FormRedirect<User> formRedirect = (FormRedirect<User>) req.getSession().getAttribute("usersFormRedirect");
+        req.getSession().removeAttribute("usersFormRedirect");
+
+        User user;
+
+        if(formRedirect != null){
+            user = (User) formRedirect.getObject();
+        }
+        else{
+            user = new User();
+        }
+
         model.addAttribute("user",user);
         model.addAttribute("rolesList",rolesList);
         model.addAttribute("pageTitle","Add new User");
@@ -90,17 +116,21 @@ public class UserController {
     @PostMapping("users/save")
     public String saveUser(@RequestParam(value = "updateUser") boolean updateUser ,
                            @RequestParam(value = "id",required = false) Long id,
-                           User user , RedirectAttributes redirectAttributes) throws UserNotFoundException {
+                           HttpSession session, User user , HttpServletRequest req,
+                           RedirectAttributes redirectAttributes) throws UserNotFoundException {
         if(!userService.isEmailUnique(user.getEmail()) && !updateUser){
             redirectAttributes.addFlashAttribute("error","The User Email is not unique");
-            return "redirect:/admin/users/new";
+            session.setAttribute("usersFormRedirect", new FormRedirect<User>(true,user));
+            return "redirect:/admin/users/new?redirect=true";
         }
         if(updateUser){
             User tempUser = userService.get(id);
             Long ID = tempUser.getId();
             if(!userService.isEmailUnique(user.getEmail()) && !(tempUser.getEmail().equals(user.getEmail()))){
                 redirectAttributes.addFlashAttribute("error","The User Email is not unique");
-                return "redirect:/admin/users/edit/"+ID;
+                PaginationRedirect paginationRedirect =
+                        (PaginationRedirect) req.getSession().getAttribute("usersPaginationRedirect");
+                return "redirect:/admin/users/edit/"+ID+"?page="+paginationRedirect.getPageNumber();
             }
             user.setId(ID);
             userService.save(user);
@@ -113,7 +143,13 @@ public class UserController {
     }
 
     @GetMapping("users/edit/{id}")
-    public String editUser(@PathVariable(value = "id") Long id ,Model model,RedirectAttributes redirectAttributes){
+    public String editUser(@PathVariable(value = "id") Long id , Model model,
+                           @RequestParam(value = "redirect",required = false) boolean redirect,
+                           @RequestParam(value = "page",required = false) int pageNumber,
+                           HttpSession session, HttpServletRequest req,
+                           RedirectAttributes redirectAttributes){
+        session.setAttribute("usersPaginationRedirect",
+                new PaginationRedirect(true,pageNumber,"USERS"));
         try{
             User user = userService.get(id);
             List<Role> rolesList = roleService.listAll();
@@ -137,10 +173,16 @@ public class UserController {
     }
 
     @GetMapping("users/delete/{id}")
-    public String deleteUser(@PathVariable(value = "id") Long id ,Model model,RedirectAttributes redirectAttributes){
+    public String deleteUser(@PathVariable(value = "id") Long id ,
+                             @RequestParam(value = "page",required = false) int pageNumber,
+                             HttpSession session,
+                             RedirectAttributes redirectAttributes){
+        session.setAttribute("usersPaginationRedirect",
+                new PaginationRedirect(true,pageNumber,"USERS"));
         try{
             User user = userService.get(id);
-            redirectAttributes.addFlashAttribute("message","The user with id = "+user.getId()+" and email = "+user.getEmail()+" has been deleted");
+            redirectAttributes.addFlashAttribute("message","The user with id = "
+                    +user.getId()+" and email = "+user.getEmail()+" has been deleted");
             userService.delete(user);
             return "redirect:/admin/users";
         }catch (UserNotFoundException e){
@@ -163,8 +205,9 @@ public class UserController {
                                    RedirectAttributes redirectAttributes,
                                    HttpSession session ){
         userService.updateUserEnabledStatus(id,status);
+        session.setAttribute("usersPaginationRedirect",
+                new PaginationRedirect(true,pageNumber,"USERS"));
         if(status){
-            session.setAttribute("paginationRedirect", new PaginationRedirect(true,pageNumber,"USERS"));
             redirectAttributes.addFlashAttribute("message","The user with id = "+id+" has been enabled");
         }
         else{

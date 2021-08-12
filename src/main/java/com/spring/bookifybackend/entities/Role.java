@@ -1,12 +1,17 @@
 package com.spring.bookifybackend.entities;
 
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
+import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "roles")
-public class Role {
+public class Role implements Serializable {
     @Id
     @Basic(optional = false)
     @GeneratedValue(strategy=GenerationType.IDENTITY, generator="IdOrGenerated")
@@ -19,6 +24,11 @@ public class Role {
 
     @Column(length = 200 , nullable = true)
     private String description;
+
+
+    @ManyToMany(targetEntity = User.class, mappedBy = "roles", cascade = CascadeType.ALL)
+    private Set<User> users = new HashSet<>();
+
 
     public Role() {
     }
@@ -54,6 +64,14 @@ public class Role {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Set<User> getUsers() {
+        return users;
+    }
+
+    public void setUsers(Set<User> users) {
+        this.users = users;
     }
 
     @Override
